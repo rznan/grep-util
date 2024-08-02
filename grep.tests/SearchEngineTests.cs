@@ -54,6 +54,26 @@ public class SearchEngineTests
         Assert.Equal(expectedLines, response);
     }
 
+    [Theory]
+    [InlineData("hello", "1\n2\n3\n")]
+    public void Execute_ShouldDoAInvertedBasicSearchAndReturnTheCorrectLines(string searchTerm, string? expectedLines)
+    {
+        // arrange & act
+        var options = new SearchOpts[] { SearchOpts.INVERT_MATCH };
+        var response = ExecuteSearch(options, test01Path, searchTerm);
+
+        // assert
+        if (response != null && expectedLines != null)
+        {
+            var expectedItens = AddPathToExpectedLines(expectedLines, test01Path);
+            var actualItens = response.Split("\r\n");
+            Assert.Equal(actualItens, expectedItens);
+            return;
+        }
+
+        Assert.Equal(expectedLines, response);
+    }
+
 
     private string? ExecuteSearch(SearchOpts[] options, string filePath, string searchTerm)
     {

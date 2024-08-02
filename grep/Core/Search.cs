@@ -24,21 +24,19 @@ public class Search
         {
             throw new NotImplementedException("Regex Support is still in development");
         }
+        else if (options.Contains(SearchOpts.CASE_INSENSITIVE))
+        {
+            tmp = new CaseInsensitiveSearch();
+        }
         else
         {
             tmp = new BasicSearch();
         }
 
-        // Select Behavior Modifications
-        if (options.Contains(SearchOpts.CASE_INSENSITIVE))
-        {
-            tmp = new CaseInsensitiveSearch();
-        }
-
         // should be the last
         if (options.Contains(SearchOpts.INVERT_MATCH))
         {
-            throw new NotImplementedException("Invert Match is still in development");
+            tmp = new InvertSearch(tmp);
         }
 
         return tmp;
