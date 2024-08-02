@@ -34,6 +34,11 @@ public class Program
             Environment.Exit(HandleError($"Could not find file: {opts.file}", 2));
             return;
         }
+        catch (NotImplementedException e)
+        {
+            Environment.Exit(HandleError(e.Message, 3));
+            return;
+        }
 
         string? result = searchEngine.Execute(opts.searchTerm);
 

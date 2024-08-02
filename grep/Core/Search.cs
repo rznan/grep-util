@@ -22,7 +22,7 @@ public class Search
         ISearchEngine tmp;
         if (options.Contains(SearchOpts.USE_REGEX))
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Regex Support is still in development");
         }
         else
         {
@@ -32,13 +32,13 @@ public class Search
         // Select Behavior Modifications
         if (options.Contains(SearchOpts.CASE_INSENSITIVE))
         {
-            throw new NotImplementedException();
+            tmp = new CaseInsensitiveSearch();
         }
 
         // should be the last
         if (options.Contains(SearchOpts.INVERT_MATCH))
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Invert Match is still in development");
         }
 
         return tmp;
