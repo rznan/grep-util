@@ -14,7 +14,7 @@ public abstract class BaseSearchEngine : ISearchEngine
             {
                 if (LineMatch(line, target))
                 {
-                    sw.WriteLine(line);
+                    sw.WriteLine($"{fr.FileName}: {line}");
                 }
             }
             return sw.ToString();

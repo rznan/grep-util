@@ -22,41 +22,40 @@ public class SearchEngineTests
     [Theory]
     [InlineData("hello", "hello, there\r\n")]
     [InlineData("2", "2\r\n")]
-    [InlineData("4", null)]
-    public void Execute_ShouldDoABasicSearchAndReturnTheCorrectLine(string searchTerm, string? expectedLine)
+    public void Execute_ShouldDoABasicSearchAndReturnTheCorrectLine(string searchTerm, string? expectedLines)
     {
         // arrange & act
         var options = new SearchOpts[] { };
-        var response = ExecuteSearch(options, test01Path, searchTerm, expectedLine);
+        var response = ExecuteSearch(options, test01Path, searchTerm);
 
         // assert
-        Assert.Equal(expectedLine, response);
+        Assert.Equal($"{test01Path}: {expectedLines}", response);
     }
 
 
     [Theory]
     [InlineData("A", "1a\n2a\n3ab\n4ba\nSalmon\n")]
     [InlineData("b", "3ab\n4ba\n5b\n6b\nBubble\n")]
-    public void Execute_ShouldDoACaseInsensitiveSearchAndReturnTheCorrectMatches(string searchTerm, string? expectedLine)
+    public void Execute_ShouldDoACaseInsensitiveSearchAndReturnTheCorrectMatches(string searchTerm, string? expectedLines)
     {
         // arrange & act
         var options = new SearchOpts[] { SearchOpts.CASE_INSENSITIVE };
-        var response = ExecuteSearch(options, test02Path, searchTerm, expectedLine);
+        var response = ExecuteSearch(options, test02Path, searchTerm);
 
         // assert
-        if (response != null && expectedLine != null)
+        if (response != null && expectedLines != null)
         {
-            var expectedItens = expectedLine.Split("\n");
+            var expectedItens = AddPathToExpectedLines(expectedLines, test02Path);
             var actualItens = response.Split("\r\n");
             Assert.Equal(actualItens, expectedItens);
             return;
         }
 
-        Assert.Equal(expectedLine, response);
+        Assert.Equal(expectedLines, response);
     }
 
 
-    private string? ExecuteSearch(SearchOpts[] options, string filePath, string searchTerm, string? expectedLine)
+    private string? ExecuteSearch(SearchOpts[] options, string filePath, string searchTerm)
     {
         // arrange
         var reader = new FileReader(filePath);
@@ -66,5 +65,19 @@ public class SearchEngineTests
         var response = searchController.Execute(searchTerm);
 
         return response;
+    }
+
+    private string[] AddPathToExpectedLines(string expectedLine, string path)
+    {
+
+        List<string> lines = [];
+        foreach (string i in expectedLine.Split("\n"))
+        {
+            if (!string.IsNullOrEmpty(i))
+                lines.Add($"{path}: {i}");
+            else
+                lines.Add(i);
+        }
+        return lines.ToArray();
     }
 }

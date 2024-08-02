@@ -3,6 +3,7 @@ namespace Grep.Core;
 public class FileReader
 {
     public int CurrentLine { get; private set; }
+    public string FileName { get; private set; }
     private StreamReader sr;
 
     public FileReader(string path)
@@ -12,6 +13,7 @@ public class FileReader
             throw new FileNotFoundException();
         }
         sr = new StreamReader(File.OpenRead(path));
+        FileName = path;
     }
 
     public string? NextLine()
