@@ -22,7 +22,7 @@ public class Search
         ISearchEngine tmp;
         if (options.Contains(SearchOpts.USE_REGEX))
         {
-            throw new NotImplementedException("Regex Support is still in development");
+            tmp = new RegexSearch();
         }
         else if (options.Contains(SearchOpts.CASE_INSENSITIVE))
         {

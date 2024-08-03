@@ -2,6 +2,7 @@ public class SearchEngineTests
 {
     private string test01Path = Path.Combine(Directory.GetCurrentDirectory(), "Resources/text.txt");
     private string test02Path = Path.Combine(Directory.GetCurrentDirectory(), "Resources/text02.txt");
+    private string test03Path = Path.Combine(Directory.GetCurrentDirectory(), "Resources/text03.txt");
 
     [Fact]
     public void Execute_BasicSearchShouldReturnNullWhenSearchingForAnUnpresentText()
@@ -74,6 +75,23 @@ public class SearchEngineTests
         Assert.Equal(expectedLines, response);
     }
 
+    [Theory]
+    [InlineData(@"\d", "hello, 1\n, 2\n")]
+    public void Execute_ShouldDoARegexSearchAndReturnTheCorrectLines(string searchTerm, string? expectedLines)
+    {
+        var options = new SearchOpts[] { SearchOpts.USE_REGEX };
+        var response = ExecuteSearch(options, test03Path, searchTerm);
+
+        if (response != null && expectedLines != null)
+        {
+            var expectedItens = AddPathToExpectedLines(expectedLines, test03Path);
+            var actualItens = response.Split("\r\n");
+            Assert.Equal(actualItens, expectedItens);
+            return;
+        }
+
+        Assert.Equal(expectedLines, response);
+    }
 
     private string? ExecuteSearch(SearchOpts[] options, string filePath, string searchTerm)
     {
@@ -86,6 +104,7 @@ public class SearchEngineTests
 
         return response;
     }
+
 
     private string[] AddPathToExpectedLines(string expectedLine, string path)
     {
