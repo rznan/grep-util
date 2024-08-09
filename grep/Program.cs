@@ -6,10 +6,19 @@ public class Program
 {
     private static void Main(string[] args)
     {
+        if (!ValidateArgs(args))
+        {
+            Environment.Exit(HandleError("USAGE: grep <parameters> filename searchTerm", 4));
+            return;
+        }
+
+        String filename = args[^2];
+        String search = args[^1];
+
         try
         {
-            Parser.Default.ParseArguments<CliOpts>(args)
-                .WithParsed<CliOpts>(opts => Run(opts));
+            Parser.Default.ParseArguments<CliOpts>(args[0..^2])
+                .WithParsed<CliOpts>(opts => Run(opts, filename, search));
         }
         catch (Exception)
         {
@@ -19,19 +28,19 @@ public class Program
     }
 
 
-    private static void Run(CliOpts opts)
+    private static void Run(CliOpts opts, string filename, string search)
     {
         Search searchEngine;
         try
         {
             searchEngine = new Search(
-                new FileReader(opts.file),
+                new FileReader(filename),
                 ParseSearchOptions(opts)
             );
         }
         catch (FileNotFoundException)
         {
-            Environment.Exit(HandleError($"Could not find file: {opts.file}", 2));
+            Environment.Exit(HandleError($"Could not find file: {filename}", 2));
             return;
         }
         catch (NotImplementedException e)
@@ -40,7 +49,7 @@ public class Program
             return;
         }
 
-        string? result = searchEngine.Execute(opts.searchTerm);
+        string? result = searchEngine.Execute(search);
 
         if (result != null)
         {
@@ -67,5 +76,11 @@ public class Program
     {
         Console.Error.WriteLine(message);
         return errorCode;
+    }
+
+
+    private static bool ValidateArgs(string[] args)
+    {
+        return (args.Length >= 2 && (!args[^1].StartsWith("-") && !args[^2].StartsWith("-")));
     }
 }
